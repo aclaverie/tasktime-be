@@ -1,0 +1,3 @@
+To import Task data into your mongoDB database.
+Make sure MongoDB is running then
+run 'mongo taskAPI < tasksJson.js' from the command line
