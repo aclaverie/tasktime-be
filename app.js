@@ -2,19 +2,25 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const Task = require('./models/taskModel');
-
 const app = express();
+const port = process.env.PORT || 3001;
 const db = mongoose.connect('mongodb://localhost:27017/tasksdb', { 
   useNewUrlParser: true, 
   useUnifiedTopology: true, 
 });
 const taskRouter = express.Router();
-const port = process.env.PORT || 3001;
 
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 //Route for listing all tasks 
 taskRouter.route('/tasks')
+.post((req,res) => {
+  const task = new Task(req.task);
+
+  console.log(task);
+  res.json(task);
+})
 .get(
   async (req, res) => {
     try{
