@@ -10,13 +10,18 @@ const db = mongoose.connect('mongodb://localhost:27017/tasksdb', {
 });
 const taskRouter = express.Router();
 
+//required to pull Json out of the Post Body
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
+const cors = require('cors')
+app.use(cors())
+
 //Route for listing all tasks 
 taskRouter.route('/tasks')
-.post((req,res) => {
-  const task = new Task(req.task);
+  .post((req,res) => {
+  console.log(req.task);
+  const task = new Task(req.body);
 
   console.log(task);
   res.json(task);
