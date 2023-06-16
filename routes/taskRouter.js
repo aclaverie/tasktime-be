@@ -66,7 +66,7 @@ function routes(Task) {
   taskRouter.route('/tasks/:taskId')
     //returns a task by id
     .get( async (req, res) => { await res.json(req.task); })
-    //Full update of a task by id
+    //Full update/replacement of a task by id
     .put( async (req, res) => {
           //destructure and pull out task
           const {task} = req;
