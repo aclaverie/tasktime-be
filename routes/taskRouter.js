@@ -1,57 +1,25 @@
 const express = require('express');
+const tasksController = require('../controllers/tasksController');
 
 function routes(Task) {
   const taskRouter = express.Router();
-  //Route for listing all tasks 
+  const controller = tasksController(Task);
   taskRouter.route('/tasks')
-    .post((req, res) => {
-      try {
-        const task = new Task(req.body);
-        task.save();
-        // console.log(task);
-        return res.status(201).json(task);
-      } catch (err) {
-        return res.json({ error: err });
-      }
-    })
-    .get(
-      async (req, res) => {
-        try {
-          //only allow query on parameters that exsit.
-          //filters out unwanted queries
-          const { query } = req;
-          // console.log(query);
-          if ((query.task) || (query.who) || (query.dueDate) || (query.done) || ({})) {
-            //find results based on authorized filter
-            let tasks = await Task.find(query).then((err, results) => {
-              if (err) return err;
-              return results;
-            });
-            if (tasks.length === 0) {
-              return res.json({ error: "No records found." });
-            } else {
-              return res.json(tasks);
-            }
-          } else if (query) {
-            //return error on unauthorized queries
-            return res.json({ error: "No records found." })
-          }
-        } catch (err) {
-          return res.json({ error: err });
-        }
-      }
-    );
+    //Creating a New Task
+    .post(controller.post)
+    //Route for listing all tasks 
+    .get(controller.get);
 
   //Use of middleware to inject the repeated task of find Task by Id
   //Only being used in '/tasks/:taskId'
-  taskRouter.use('/tasks/:taskId', async (req, res, next)=>{
+  taskRouter.use('/tasks/:taskId', async (req, res, next) => {
     try {
       let task = await Task.findById(req.params.taskId)
-      .then((err, result) => {
-        if (err) return err;
-        return result;
-      });
-      if(task){
+        .then((err, result) => {
+          if (err) return err;
+          return result;
+        });
+      if (task) {
         //we create a property in the req object to store the task
         //this makes it available downstream to get, put etc.
         req.task = task;
@@ -65,40 +33,42 @@ function routes(Task) {
   //Route actions for one task based on id
   taskRouter.route('/tasks/:taskId')
     //returns a task by id
-    .get( async (req, res) => { await res.json(req.task); })
+    .get(async (req, res) => {
+      await res.json(req.task);
+    })
     //Full update/replacement of a task by id
-    .put( async (req, res) => {
-          //destructure and pull out task
-          const {task} = req;
-          //change properties based on edited task
-          task.task = req.body.task;
-          task.who = req.body.who;
-          task.dueDate = req.body.dueDate;
-          task.done = req.body.done;
-          //saves to database with mongoose library
-          //using proper asynchronous technique to save
-          //noting mongoose returns a promise
-          req.task.save()
-          .then((result) => {
-            return res.json(result);
-          })
-          .catch((err)=>{
-            return res.json({ error: err });
-          });
-      })
+    .put(async (req, res) => {
+      //destructure and pull out task
+      const { task } = req;
+      //change properties based on edited task
+      task.task = req.body.task;
+      task.who = req.body.who;
+      task.dueDate = req.body.dueDate;
+      task.done = req.body.done;
+      //saves to database with mongoose library
+      //using proper asynchronous technique to save
+      //noting mongoose returns a promise
+      req.task.save()
+        .then((result) => {
+          return res.json(result);
+        })
+        .catch((err) => {
+          return res.json({ error: err });
+        });
+    })
     //Updates only the portions requiring update
     .patch(async (req, res) => {
       //destructure and pull out task
-      const {task} = req;
+      const { task } = req;
       //check if user sent id field which is not to be updated
-      if(req.body._id){
+      if (req.body._id) {
         delete req.body._id
       }
       //Use Object.entries to pull out key-value pairs array
       //this usage will allow for ForEach use and objects with many properties
       //and avoid the tideious task of writing if else statements
       //to check if they are there and update... arrggghhhh
-      Object.entries(req.body).forEach((item)=>{
+      Object.entries(req.body).forEach((item) => {
         const key = item[0];
         const value = item[1];
         task[key] = value;
@@ -108,17 +78,17 @@ function routes(Task) {
         .then((result) => {
           return res.json(result);
         })
-        .catch((err)=>{
+        .catch((err) => {
           return res.json({ error: err });
         });
     })
     //Deletes the task
-    .delete(async (req, res)=>{
+    .delete(async (req, res) => {
       req.task.deleteOne()
         .then(() => {
           return res.sendStatus(204);
         })
-        .catch((err)=>{
+        .catch((err) => {
           return res.send(err);
         });
     });
