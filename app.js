@@ -9,9 +9,7 @@ const db = mongoose.connect('mongodb+srv://aclaverie:9nuWubu4@cluster0.sdlwvxz.m
   useNewUrlParser: true, 
   useUnifiedTopology: true, 
 });
-console.log(client.then((data)=>{
-  console.log(data.Collection);
-}));
+
 const Task = require('./models/taskModel');
 const taskRouter = require('./routes/taskRouter')(Task);
 
