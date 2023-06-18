@@ -5,7 +5,7 @@ const cors = require('cors');
 
 const app = express();
 const port = process.env.PORT || 3001;
-const db = mongoose.connect('mongodb://localhost:27017/tasksdb', { 
+const db = mongoose.connect('mongodb+srv://aclaverie:9nuWubu4@cluster0.sdlwvxz.mongodb.net/?retryWrites=true&w=majority/tasksdb', { 
   useNewUrlParser: true, 
   useUnifiedTopology: true, 
 });
