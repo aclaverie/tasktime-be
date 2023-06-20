@@ -39,10 +39,18 @@ function tasksController(Task) {
             if (err) return err;
             return results;
           });
+
           if (tasks.length === 0) {
             return res.json({ error: "No records found." });
           } else {
-            return res.json(tasks);
+            
+            const returnedTasks = tasks.map((task)=>{
+              const newTask = task.toJSON();
+              newTask.links = {};
+              newTask.links.self = `https://${req.headers.host}/api/tasks/${task._id}`;
+              return newTask;
+            })
+            return res.json(returnedTasks);
           }
         } else if (query) {
           //return error on unauthorized queries

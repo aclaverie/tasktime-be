@@ -34,7 +34,11 @@ function routes(Task) {
   taskRouter.route('/tasks/:taskId')
     //returns a task by id
     .get(async (req, res) => {
-      await res.json(req.task);
+      const returnedTasks = await req.task.toJSON();
+      returnedTasks.links = {};
+      const assignee = req.task.who.replace(' ', '%20');
+      returnedTasks.links.FilterByWho = `https://${req.headers.host}/api/tasks?who=${assignee}`;
+      return res.json(returnedTasks);
     })
     //Full update/replacement of a task by id
     .put(async (req, res) => {
