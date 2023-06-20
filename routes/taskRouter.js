@@ -46,6 +46,7 @@ function routes(Task) {
       const { task } = req;
       //change properties based on edited task
       task.task = req.body.task;
+      task.desc = req.body.desc;
       task.who = req.body.who;
       task.dueDate = req.body.dueDate;
       task.done = req.body.done;

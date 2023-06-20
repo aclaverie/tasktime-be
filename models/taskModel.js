@@ -5,8 +5,9 @@ const { Schema } = mongoose;
 const taskModel = new Schema(
   {
     task: { type: String, required: true },
+    desc: { type: String, required: true },
     who: { type: String, required: true },
-    dueDate: { type: String, required: true,  }, //UTC timestamp
+    dueDate: { type: String, required: true,  },
     done: { type: Boolean, default: false },
   }
 );

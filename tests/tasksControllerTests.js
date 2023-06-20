@@ -29,6 +29,7 @@ describe('Task Controller Tests:', () => {
       const req= {
         task: {
           task: 'Server Check',
+          desc: 'Aripita Room',
           who: 'Sean',
           dueDate: '22/12/2023',
           done: false
